@@ -50,7 +50,7 @@ export function useSlideAnimation({
   const { keyboardHeight } = useKeyboard();
 
   const animate = React.useCallback((toValue: number) => {
-    animatedValue.value = withSpring(toValue, { damping: 20, stiffness: 200 });
+    animatedValue.value = withSpring(toValue, { damping: 80, stiffness: 1000 });
   }, [animatedValue]);
 
   const animationStyles = useAnimatedStyle(() => {
