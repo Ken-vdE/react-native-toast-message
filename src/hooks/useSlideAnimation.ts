@@ -1,5 +1,5 @@
 import React from 'react';
-import { Animated, Platform } from 'react-native';
+import { useSharedValue, withSpring, useAnimatedStyle, interpolate } from 'react-native-reanimated';
 
 import { ToastPosition } from '../types';
 import { additiveInverseArray } from '../utils/array';
@@ -36,11 +36,6 @@ export function translateYOutputRangeFor({
   return outputRange;
 }
 
-const useNativeDriver = Platform.select({
-  ios: true,
-  default: false
-});
-
 export function useSlideAnimation({
   position,
   height,
@@ -49,20 +44,15 @@ export function useSlideAnimation({
   keyboardOffset,
   avoidKeyboard
 }: UseSlideAnimationParams) {
-  const animatedValue = React.useRef(new Animated.Value(0));
+  const animatedValue = useSharedValue(0);
   const { keyboardHeight } = useKeyboard();
 
   const animate = React.useCallback((toValue: number) => {
-    Animated.spring(animatedValue.current, {
-      toValue,
-      useNativeDriver,
-      friction: 8
-    }).start();
-  }, []);
+    animatedValue.value = withSpring(toValue, { damping: 20, stiffness: 200 });
+  }, [animatedValue]);
 
-  const translateY = React.useMemo(() => animatedValue.current.interpolate({
-    inputRange: [0, 1],
-    outputRange: translateYOutputRangeFor({
+  const animationStyles = useAnimatedStyle(() => {
+    const translateYOutputRange = translateYOutputRangeFor({
       position,
       height,
       topOffset,
@@ -70,24 +60,25 @@ export function useSlideAnimation({
       keyboardHeight,
       keyboardOffset,
       avoidKeyboard
-    })
-  }), [position, height, topOffset, bottomOffset, keyboardHeight, keyboardOffset, avoidKeyboard]);
+    });
 
-  const opacity = animatedValue.current.interpolate({
-    inputRange: [0, 0.7, 1],
-    outputRange: [0, 1, 1]
-  });
+    const translateY = interpolate(
+      animatedValue.value,
+      [0, 1],
+      translateYOutputRange
+    );
+
+    const opacity = interpolate(animatedValue.value, [0, 0.7, 1], [0, 1, 1]);
+
+    return {
+      opacity,
+      transform: [{ translateY }]
+    };
+  }, [position, height, topOffset, bottomOffset, keyboardHeight, keyboardOffset, avoidKeyboard]);
 
   return {
     animatedValue,
     animate,
-    animationStyles: {
-      opacity,
-      transform: [
-        {
-          translateY
-        }
-      ]
-    }
+    animationStyles
   };
 }

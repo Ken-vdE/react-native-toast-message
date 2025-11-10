@@ -1,16 +1,15 @@
 /* eslint-env jest */
 
 import { renderHook } from '@testing-library/react-hooks';
-import { Animated, GestureResponderEvent } from 'react-native';
+import { GestureResponderEvent } from 'react-native';
+import { SharedValue } from 'react-native-reanimated';
 
 import { mockGestureValues } from '../../__helpers__/PanResponder';
 import { usePanResponder } from '../usePanResponder';
 import { moveShouldSetPanResponder, startShouldSetPanResponder } from '..';
 
 const setup = ({ newAnimatedValueForGesture = 0, disable = false } = {}) => {
-  const animatedValue = {
-    current: new Animated.Value(0)
-  };
+  const animatedValue: SharedValue<number> = { value: 0 } as SharedValue<number>;
   const computeNewAnimatedValueForGesture = jest.fn(
     () => newAnimatedValueForGesture
   );

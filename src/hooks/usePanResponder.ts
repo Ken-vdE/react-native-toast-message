@@ -1,10 +1,6 @@
-import React, { RefObject } from 'react';
-import {
-  Animated,
-  GestureResponderEvent,
-  PanResponder,
-  PanResponderGestureState
-} from 'react-native';
+import React from 'react';
+import { GestureResponderEvent, PanResponder, PanResponderGestureState } from 'react-native';
+import { SharedValue } from 'react-native-reanimated';
 
 export function startShouldSetPanResponder() {
   return true;
@@ -34,7 +30,7 @@ export function shouldDismissView(
 }
 
 export type UsePanResponderParams = {
-  animatedValue: RefObject<Animated.Value>;
+  animatedValue: SharedValue<number>;
   computeNewAnimatedValueForGesture: (
     gesture: PanResponderGestureState
   ) => number;
@@ -67,7 +63,7 @@ export function usePanResponder({
 
       const newAnimatedValue = computeNewAnimatedValueForGesture(gesture);
 
-      animatedValue.current?.setValue(newAnimatedValue);
+      animatedValue.value = newAnimatedValue;
     },
     [animatedValue, computeNewAnimatedValueForGesture, disable]
   );

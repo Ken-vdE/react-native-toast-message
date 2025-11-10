@@ -1,7 +1,6 @@
 /* eslint-env jest */
 
 import { renderHook } from '@testing-library/react-hooks';
-import { Animated } from 'react-native';
 
 import {
   translateYOutputRangeFor,
@@ -33,21 +32,17 @@ describe('test useSlideAnimation hook', () => {
     const { result } = setup();
     const { animatedValue, animate, animationStyles } = result.current;
 
-    expect(animatedValue.current).toBeDefined();
+    expect(animatedValue).toBeDefined();
+    expect(typeof animatedValue.value).toBe('number');
     expect(animate).toBeDefined();
     expect(animationStyles.opacity).toBeDefined();
     expect(animationStyles.transform).toBeDefined();
   });
 
   it('animates to a new value', async () => {
-    const spy = jest.spyOn(Animated, 'spring').mockImplementation(() => ({
-      start: jest.fn(),
-      stop: jest.fn(),
-      reset: jest.fn()
-    }));
     const { result } = setup();
     result.current.animate(1);
-    expect(spy).toHaveBeenCalled();
+    expect(result.current.animatedValue.value).toBe(1);
   });
 });
 
