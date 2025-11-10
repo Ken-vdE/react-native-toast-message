@@ -25,6 +25,8 @@ export function translateYOutputRangeFor({
 }: UseSlideAnimationParams & {
   keyboardHeight: number;
 }) {
+  'worklet';
+
   const offset = position === 'bottom' ? bottomOffset : topOffset;
   const keyboardAwareOffset =
     position === 'bottom' && avoidKeyboard ? keyboardHeight + keyboardOffset : 0;
