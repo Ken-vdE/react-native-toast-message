@@ -1,5 +1,6 @@
 import React from 'react';
-import { Animated, Dimensions, PanResponderGestureState } from 'react-native';
+import { Dimensions, PanResponderGestureState } from 'react-native';
+import Animated from 'react-native-reanimated';
 
 import { useLogger, useGesture } from '../contexts';
 import {
